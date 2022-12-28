@@ -1,9 +1,9 @@
 [user]
-  email = josh@goatslacker.com
+	email = 60019601+josh-signal@users.noreply.github.com
   name = Josh Perez
 
 [github]
-  user = goatslacker
+  user = josh-signal
 
 [color]
   branch = auto
@@ -32,7 +32,7 @@
   dc = diff --cached
   df = diff --color
   dfst = diff --stat
-  feature = !sh -c 'git checkout -b $(whoami)/$(date +%s | md5 | cut -c 1-7)'
+  feature = !sh -c 'git checkout -b DESKTOP-$0--$(date +%s | md5 | cut -c 1-7)'
   fixup = !sh -c 'git commit --fixup=HEAD' -
   fork = !sh -c 'git remote add fork git@github.com:$0.git'
   ign = ls-files -o -i --exclude-standard
@@ -44,16 +44,25 @@
   pl = pull origin master
   ps = push origin master
   po = push origin gh-pages
+  poop = !sh -c 'git stash pop`
   ri = rebase --interactive --autosquash
   sh = stash save
   shap = !sh -c 'git stash apply stash@{$1}'
   shdf = !sh -c 'git stash show -u stash@{$1}'
   shls = stash list
-  squash = !git add . && !git fixup HEAD && !git ri HEAD~2
+  squash = !sh -c 'git add . && git fixup HEAD && git ri HEAD~2'
   st = status -s
   stage = add
   switch = checkout
   unstage = reset HEAD
+  files = !git diff --name-only $(git merge-base HEAD main)
+  stat = !git diff --stat $(git merge-base HEAD main)
+  reviewall = !vim -p $(git files) +\"tabdo Gdiff main +\"let g:gitgutter_diff_base = 'main'\"
+  review = !vim -p +\"tabdo Gdiff main\" +\"let g:gitgutter_diff_base = 'main'\"
+  titles = !bash -c 'comm -3 <(git log --format="%s" $0 | sort) <(git log --format="%s" "main" | sort)'
+  merge-pr = !bash -c 'gh pr checkout $0 --branch pr/$0 && git checkout main && git merge --no-ff -m "Merge signalapp/Signal-Desktop#$0" pr/$0'
+  review-pr = !bash -c 'gh pr checkout $0 --branch pr/$0'
+
 [core]
 	editor = /usr/bin/vim
 	excludesfile = /Users/josh_perez/.gitignore_global
@@ -65,5 +74,6 @@
 	default = current
 [filter "lfs"]
 	required = true
-	clean = git-lfs clean %f
-	smudge = git-lfs smudge %f
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
